@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 echo "********************Welcome to TicTacToe Simulation Problem********************"
 
 #CONSTATNTS
@@ -19,4 +19,16 @@ do
 done
 }
 
+#function is used to assign the letters to a player
+function assignSymbols(){
+randomChecksign=$(($RANDOM%2))
+	if [ $randomChecksign == 1 ]
+	then
+		SIGN=X
+	else
+		SIGN=O
+	fi
+}
+
 resetBoard
+assignSymbols
