@@ -1,48 +1,82 @@
-#!/bin/bash -x
-echo "********************Welcome to TicTacToe Simulation Problem********************"
+#!/bin/bash 
 
-declare -a board
+echo ********************Welcome to TicTacToe Simulation Problem********************
 
-#CONSTATNTS
-ROW=$1
-COLUMN=$2
+#CONSTANTS
+readonly ROW=3
+readonly COLUMN=3
+MAX_POSITION=9
 PLAYER=1
 
+#VARIABLES
 randomCheck=$(($RANDOM%2))
+count=1
 
-#function is used to start fresh by resetting the board
+declare -A gameBoard
+
+# to Start fresh by resetting the board
 function resetBoard(){
-for (( i=1;i<=$ROW;i++ ))
-do
-	for (( j=1;j<=$COLUMN;j++ ))
-	do
-		board[$i,$j]="_"
-	done
-	 echo ${board[@]}
-done
+   for ((i=1;i<=$ROW;i++))
+   do
+      for ((j=1;j<=$COLUMN;j++))
+      do
+         gameBoard[$i,$j]="-"
+      done
+   done
 }
 
-#function is used to assign the letters to a player
-function assignSymbols(){
-randomCheck=$(($RANDOM%2))
-	if [ $randomCheck -eq $PLAYER ]
-	then
-		SIGN=X
-	else
-		SIGN=O
-	fi
+# to assign the letters to a player
+function assignSymbols() {
+   if [ $randomCheck -eq $PLAYER ]
+   then
+      sign="X"
+   else
+      sign="X"
+   fi
+   echo $sign
 }
 
-#function is used to check who playes first
+#to check who playes first
 function checkTurn(){
-	if [ $randomCheck -eq $PLAYER ]
-	then
-		echo "player 1 will be played first"
+   if [ $randomCheck -eq $PLAYER ]
+   then
+		turn=player 
 	else
-		echo "player 2 will be played first"
-	fi
+		turn=player
+   fi
+		echo $turn will be played first
+}
+
+#to display game board
+function displayBoard(){
+   for (( i=1;i<=$ROW;i++ ))
+   do
+      for (( j=1;j<=$COLUMN;j++ ))
+      do
+         echo -e "${gameBoard[$i,$j]} | \c"
+      done
+         echo
+   done
+}
+
+#to take input from user and to choose valid cells
+function userInput(){
+   read -p "enter row & column number to insert value" rowNumber columnNumber
+      if [[ ${gameBoard[$rowNumber,$columnNumber]} == "-" ]]
+      then
+         gameBoard[$rowNumber,$columnNumber]=$sign
+         displayBoard
+         ((count++))
+      else
+         echo "OOPS! Position is occupied" 
+      fi
 }
 
 resetBoard
 assignSymbols
 checkTurn
+
+while [[ $count -le $MAX_POSITION ]]
+do
+	userInput
+done
