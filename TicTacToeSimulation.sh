@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 echo "********************Welcome to TicTacToe Simulation Problem********************"
 
 #CONSTANTS
@@ -86,6 +86,7 @@ read -p "enter row & column number to insert value" rowNumber columnNumber
 	then
 		board[$rowNumber,$columnNumber]=$player
 		boardConditions
+		winPossiblityOfComputer
 		computerInput
 	else
 		echo "OOPS! Position is occupied"
@@ -95,9 +96,12 @@ read -p "enter row & column number to insert value" rowNumber columnNumber
 
 #to take input from computer and to choose valid cells
 function computerInput(){
+winPossiblityOfComputer
+if [[ $flag -eq 0 ]]
+then
 	rowNumber2=$(($RANDOM%3+1))
 	columnNumber2=$(($RANDOM%3+1))
-		echo "Computer will be played"
+	echo "Computer will be played first"
 	if [[ ${board[$rowNumber2,$columnNumber2]} == "-" ]]
 	then
 		board[$rowNumber2,$columnNumber2]=$computer
@@ -107,6 +111,7 @@ function computerInput(){
 		echo "OOPS! Position is occupied"
 		computerInput
    fi
+fi
 }
 
 #function is used to check win conditions of game
@@ -118,48 +123,118 @@ do
 		horizontalData=${board[$i,$j]}${board[$i,$(($j+1))]}${board[$i,$(($j+2))]}
 		if [ $horizontalData == "$player$player$player" ]
 		then
-			echo "Congrats You won horizontally"
+			echo "Congrats..!! You won horizontally"
 			exit
 		elif [[ $horizontalData == "$computer$computer$computer" ]]
 		then
-			echo "Congrats! Computer Won Horizontally"
+			echo "Computer Won Horizontally"
 			exit
 		fi
 
 		verticalData=${board[$j,$i]}${board[$(($j+1)),$i]}${board[$(($j+2)),$i]}
 		if [[ $verticalData == "$player$player$player" ]]
 		then
-			echo "Congrats You won vertically"
+			echo "Congrats..!! You won vertically"
 			exit
 		elif [[ $verticalData == "$computer$computer$computer" ]]
 		then
-			echo "Congrats! Computer Won Horizontally"
+			echo "Computer Won Vertically"
 			exit
 		fi
 
-		firstDiagonal=${board[$i,$j]}${board[$(($i+1)),$(($j+1))]}${board[$(($i+2)),$(($j+2))]} 
+		firstDiagonal=${board[$i,$j]}${board[$(($i+1)),$(($j+1))]}${board[$(($i+2)),$(($j+2))]}
 		secondDiagonal=${board[$i,$(($j+2))]}${board[$(($i+1)),$(($j+1))]}${board[$(($i+2)),$j]}
 		if [[ $firstDiagonal == "$player$player$player" ]] || [[ $secondDiagonal == "$player$player$player" ]]
 		then
-			echo "You Won Diagonally!!"
+			echo "Congrats..!! You Won Diagonally"
 			exit
 		elif [[ $firstDiagonal == "$computer$computer$computer" ]] || [[ $secondDiagonal == "$computer$computer$computer" ]]
 		then
-			echo "Computer Won Diagonally!!"
+			echo "Computer Won Diagonally"
 			exit
 		fi
 	done
 done
 }
 
-resetBoard
+#function is used to check win possibility of computer
+function winPossiblityOfComputer(){
+#for horizontal
+flag=0
+for (( i=1;i<=$ROW;i++ ))
+do
+	for (( j=1;j<=$COLUMN;j++ ))
+	do
+		if [[ ${board[$i,$j]} == "-" && ${board[$i,$(($j+1))]} == $computer && ${board[$i,$(($j+2))]} == $computer ]]
+		then
+			board[$i,$j]=$computer
+			flag=1
+		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == "-" && ${board[$i,$(($j+2))]} == $computer ]]
+		then
+			board[$i,$(($j+1))]=$computer
+			flag=1
+		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == $computer && ${board[$i,$(($j+2))]} == "-" ]]
+		then
+			board[$i,$(($j+2))]=$computer
+			flag=1
+#for Vertical
+		elif [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == $computer ]]
+		then
+			board[$j,$i]=$computer
+			flag=1
+		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == "-" && ${board[$(($j+2)),$i]} == $computer ]]
+		then
+			board[$(($j+1)),$i]=$computer
+			flag=1
+		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == "-" ]]
+		then
+			board[$(($j+2)),$i]=$computer
+			flag=1
+#for 1st diagonal
+		elif [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
+		then
+			board[$i,$j]=$computer
+			flag=1
+		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
+		then
+			board[$(($i+1)),$(($j+1))]=$computer
+			flag=1
+		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == "-" ]]
+		then
+			board[$(($i+2)),$(($j+2))]=$computer
+			flag=1
+#for 2nd diagonal
+		elif [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == $computer ]]
+		then
+			board[$i,$(($j+2))]=$computer
+			flag=1
+		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$j]} == $computer ]]
+		then
+			board[$(($i+1)),$(($j+1))]=$computer
+			flag=1
+		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == "-" ]]
+		then
+			board[$(($i+2)),$j]=$computer
+			flag=1
+		fi
+	done
+done
+
+if [ $flag -eq 1 ]
+then
+	displayBoard
+	winConditions
+fi
+}
+
 assignSymbols
+resetBoard
 checkTurn
 
 # to check whether count is less than or equal to max position
 while [[ $count -le $MAX_POSITION ]]
 do
-   userInput
+	userInput
 done
 
 
