@@ -1,10 +1,10 @@
-#!/bin/bash -x
+#!/bin/bash
 echo "********************Welcome to TicTacToe Simulation Problem********************"
 declare -A board
 
 #CONSTANTS
-readonly ROW=3
-readonly COLUMN=3
+readonly ROW=$1
+readonly COLUMN=$2
 readonly MAX_POSITION=9
 
 #VARIABLES
@@ -61,7 +61,7 @@ function displayBoard(){
 }
 
 #to display condition when game gets tie
-function tieCondition() {
+function tieConditions() {
 	if [[ $count -eq $MAX_POSITION ]]
 	then
 		echo "Game have tie"
@@ -73,7 +73,7 @@ function tieCondition() {
 function boardConditions(){
 	displayBoard
 	winConditions
-	tieCondition
+	tieConditions
 	((count++))
 }
 
@@ -93,19 +93,21 @@ read -p "enter row & column number to insert value" rowNumber columnNumber
 
 #to take input from computer and to choose valid cells
 function computerInput(){
-computersWinPossiblity
 flag=0
-	echo "Computer will be played"
+computersPossibility $computer
 	if [[ $flag -eq 0 ]]
 	then
-		computersBlockPossibility
-	elif [[ $flag -eq 0 ]]
+		computersPossibility $player
+	fi
+	if [[ $flag -eq 0 ]]
 	then
 		computersCornerPossibility
-	elif [[ $flag -eq 0 ]]
+	fi
+	if [[ $flag -eq 0 ]]
 	then
 		computersCenterPossibility
-	elif [[ $flag -eq 0 ]]
+	fi
+	if [[ $flag -eq 0 ]]
 	then
 		computersSidesPossibility
 	fi
@@ -167,167 +169,86 @@ done
 }
 
 #function is used to check win possibility of computer
-function computersWinPossiblity(){
+function computersPossibility(){
 flag=0
+input=$1
 for (( i=1;i<=$ROW;i++ ))
 do
 	for (( j=1;j<=$COLUMN;j++ ))
 	do
 #for horizontal
-		if [[ ${board[$i,$j]} == "-" && ${board[$i,$(($j+1))]} == $computer && ${board[$i,$(($j+2))]} == $computer ]]
+		if [[ ${board[$i,$j]} == "-" && ${board[$i,$(($j+1))]} == $1 && ${board[$i,$(($j+2))]} == $1 ]]
 		then
 			board[$i,$j]=$computer
 			flag=1
-		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == "-" && ${board[$i,$(($j+2))]} == $computer ]]
+			break
+		elif [[ ${board[$i,$j]} == $1 && ${board[$i,$(($j+1))]} == "-" && ${board[$i,$(($j+2))]} == $1 ]]
 		then
 			board[$i,$(($j+1))]=$computer
 			flag=1
 			break
-		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == $computer && ${board[$i,$(($j+2))]} == "-" ]]
+		elif [[ ${board[$i,$j]} == $1 && ${board[$i,$(($j+1))]} == $1 && ${board[$i,$(($j+2))]} == "-" ]]
 		then
 			board[$i,$(($j+2))]=$computer
 			flag=1
 			break
 #for Vertical
-		elif [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == $computer ]]
+		elif [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $1 && ${board[$(($j+2)),$i]} == $1 ]]
 		then
 			board[$j,$i]=$computer
 			flag=1
 			break
-		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == "-" && ${board[$(($j+2)),$i]} == $computer ]]
+		elif [[ ${board[$j,$i]} == $1 && ${board[$(($j+1)),$i]} == "-" && ${board[$(($j+2)),$i]} == $1 ]]
 		then
 			board[$(($j+1)),$i]=$computer
 			flag=1
 			break
-		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == "-" ]]
+		elif [[ ${board[$j,$i]} == $1 && ${board[$(($j+1)),$i]} == $1 && ${board[$(($j+2)),$i]} == "-" ]]
 		then
 			board[$(($j+2)),$i]=$computer
 			flag=1
 			break
 #for 1st diagonal
-		elif [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
+		elif [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $1 && ${board[$(($i+2)),$(($j+2))]} == $1 ]]
 		then
 			board[$i,$j]=$computer
 			flag=1
 			break
-		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
+		elif [[ ${board[$i,$j]} == $1 && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$(($j+2))]} == $1 ]]
 		then
 			board[$(($i+1)),$(($j+1))]=$computer
 			flag=1
 			break
-		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == "-" ]]
+		elif [[ ${board[$i,$j]} == $1 && ${board[$(($i+1)),$(($j+1))]} == $1 && ${board[$(($i+2)),$(($j+2))]} == "-" ]]
 		then
 			board[$(($i+2)),$(($j+2))]=$computer
 			flag=1
 			break
 #for 2nd diagonal
-		elif [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == $computer ]]
+		elif [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $1 && ${board[$(($i+2)),$j]} == $1 ]]
 		then
 			board[$i,$(($j+2))]=$computer
 			flag=1
 			break
-		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$j]} == $computer ]]
+		elif [[ ${board[$i,$(($j+2))]} == $1 && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$j]} == $1 ]]
 		then
 			board[$(($i+1)),$(($j+1))]=$computer
 			flag=1
 			break
-		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == "-" ]]
+		elif [[ ${board[$i,$(($j+2))]} == $1 && ${board[$(($i+1)),$(($j+1))]} == $1 && ${board[$(($i+2)),$j]} == "-" ]]
 		then
 			board[$(($i+2)),$j]=$computer
 			flag=1
 			break
 		fi
-			
+		 done
 		[ $flag == 1 ] && break
-	done
 done
 		if [ $flag -eq 1 ]
 		then
+			((count++))
 			displayBoard
-			winConditions
 		fi
-}
-
-#function is used to check block condition for player
-function computersBlockPossibility(){
-#for horizontal
-for (( i=1;i<=$ROW;i++ ))
-do
-   for (( j=1;j<=$COLUMN;j++ ))
-   do
-	if [[ ${board[$i,$j]} == "-" && ${board[$i,$(($j+1))]} == $player && ${board[$i,$(($j+2))]} == $player ]]
-	then
-		board[$i,$j]=$computer
-		flag=1
-		break
-	elif [[ ${board[$i,$j]} == $player && ${board[$i,$(($j+1))]} == "-" && ${board[$i,$(($j+2))]} == $player ]]
-	then
-		board[$i,$(($j+1))]=$computer
-		flag=1
-		break
-	elif [[ ${board[$i,$j]} == $player && ${board[$i,$(($j+1))]} == $player && ${board[$i,$(($j+2))]} == "-" ]]
-	then
-		board[$i,$(($j+2))]=$computer
-		flag=1
-		break
-#for Vertical
-	elif [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $player && ${board[$(($j+2)),$i]} == $player ]]
-	then
-		board[$j,$i]=$computer
-		flag=1
-		break
-	elif [[ ${board[$j,$i]} == $player && ${board[$(($j+1)),$i]} == "-" && ${board[$(($j+2)),$i]} == $player ]]
-	then
-		board[$(($j+1)),$i]=$computer
-		flag=1
-		break
-	elif [[ ${board[$j,$i]} == $player && ${board[$(($j+1)),$i]} == $player && ${board[$(($j+2)),$i]} == "-" ]]
-	then
-		board[$(($j+2)),$i]=$computer
-		flag=1
-		break
-#1st diagonal
-	elif [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$(($j+2))]} == $player ]]
-	then
-		board[$i,$j]=$computer
-		flag=1
-		break
-	elif [[ ${board[$i,$j]} == $player && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$(($j+2))]} == $player ]]
-	then
-		board[$(($i+1)),$(($j+1))]=$computer
-		flag=1
-		break
-	elif [[ ${board[$i,$j]} == $player && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$(($j+2))]} == "-" ]]
-	then
-		board[$(($i+2)),$(($j+2))]=$computer
-		flag=1
-		break
-#2nd diagonal
-	elif [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$j]} == $player ]]
-	then
-		board[$i,$(($j+2))]=$computer
-		flag=1
-		break
-	elif [[ ${board[$i,$(($j+2))]} == $player && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$j]} == $player ]]
-	then
-		board[$(($i+1)),$(($j+1))]=$computer
-		flag=1
-		break
-	elif [[ ${board[$i,$(($j+2))]} == $player && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$j]} == "-" ]]
-	then
-		board[$(($i+2)),$j]=$computer
-		flag=1
-		break
-	fi
-	done
-		
-		[ $flag == 1 ] && break
-done
-if [ $flag -eq 1 ]
-then
-	((count++))
-	displayBoard
-fi
 }
 
 #function is used to check corner possibility of computer
@@ -341,7 +262,7 @@ flag=0
 			then
 				board[$i,$j]=$computer
 				flag=1
-         fi
+			fi
 			if [[ $flag -eq 1 ]]
 			then
 				displayBoard
@@ -352,15 +273,16 @@ flag=0
 
 #function is used to check center possibility of computer
 function computersCenterPossibility(){
-   if [[ ${gameBoard[2,2]} == "-" ]]
+   if [[ ${board[2,2]} == "-" ]]
    then
-      gameBoard[2,2]=$computer
+      board[2,2]=$computer
       flag=1
+		displayBoard
    fi
    if [[ $flag -eq 1 ]]
    then
       displayBoard
-   fi
+ fi
 }
 
 #function is used to check side possibility of computer
@@ -372,10 +294,12 @@ function computersSidesPossibility(){
 		then
 			board[$i,$j]=$computer
 			flag=1
+			displayBoard
 		elif [[ ${board[$j,$i]} == "-" ]]
 		then
 			board[$j,$i]=$computer
 			flag=1
+			displayBoard
 		fi
 		if [[ $flag -eq 1 ]]
 		then
